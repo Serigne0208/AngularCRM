@@ -1,12 +1,14 @@
 import { NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup,ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import{MatInputModule} from '@angular/material/input';
-import{MatFormField} from '@angular/material/form-field';
+import{MatFormField, SubscriptSizing} from '@angular/material/form-field';
 import{MatButtonModule} from '@angular/material/button'
 import { HelpComponent } from '../component/help/help.component';
 import { AuthentificationService } from './authentification.service';
 import { Router } from '@angular/router';
+import { User } from './model/user';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'crm-login',
@@ -21,12 +23,15 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
     loginForm:FormGroup;
     loginErrorMessages= {
       required: 'login required',
       minlength: 'should be 3 char at least'
     }
+
+    private subs:Subscription[]=[]
+
     constructor(private authentService: AuthentificationService,
                 private router: Router
     ){
@@ -37,16 +42,20 @@ export class LoginComponent {
         password: new FormControl('',[Validators.required, no$InPassWordValidator])
       })
     }
+    
+  ngOnDestroy(): void {
+    this.subs.forEach(sub=>sub.unsubscribe);
+  }
 
     login():void{
-      const user= this.authentService.authentUser(
+      this.subs.push( this.authentService.authentUser(
          this.loginForm.value.login,
-         this.loginForm.value.password);
-      console.log(user);
-
-      if(user){
-             this.router.navigateByUrl('/home');
-      }
+         this.loginForm.value.password)
+         .subscribe({
+            next:(data:User)=>{this.router.navigateByUrl('/home');},
+            error:(error:Error)=>{alert(error)},
+            complete:()=>{}
+         }));
     }
 }
 
