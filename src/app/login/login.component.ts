@@ -6,6 +6,7 @@ import{MatFormField} from '@angular/material/form-field';
 import{MatButtonModule} from '@angular/material/button'
 import { HelpComponent } from '../component/help/help.component';
 import { AuthentificationService } from './authentification.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'crm-login',
@@ -26,7 +27,9 @@ export class LoginComponent {
       required: 'login required',
       minlength: 'should be 3 char at least'
     }
-    constructor(private authentService: AuthentificationService){
+    constructor(private authentService: AuthentificationService,
+                private router: Router
+    ){
       this.loginForm =new FormGroup({
         login: new FormControl('',[Validators.required, Validators.minLength(3)]),
         password: new FormControl('',[Validators.required, no$InPassWordValidator])
@@ -37,8 +40,11 @@ export class LoginComponent {
       const user= this.authentService.authentUser(
          this.loginForm.value.login,
          this.loginForm.value.password);
-      
       console.log(user);
+
+      if(user){
+             this.router.navigateByUrl('/home');
+      }
     }
 }
 
