@@ -30,6 +30,8 @@ export class LoginComponent {
     constructor(private authentService: AuthentificationService,
                 private router: Router
     ){
+      this.authentService.disconnect();
+      
       this.loginForm =new FormGroup({
         login: new FormControl('',[Validators.required, Validators.minLength(3)]),
         password: new FormControl('',[Validators.required, no$InPassWordValidator])
