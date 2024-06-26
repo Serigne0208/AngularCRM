@@ -4,6 +4,8 @@ import { AbstractControl, FormControl, FormGroup,ReactiveFormsModule, Validation
 import{MatInputModule} from '@angular/material/input';
 import{MatFormField} from '@angular/material/form-field';
 import{MatButtonModule} from '@angular/material/button'
+import { HelpComponent } from '../component/help/help.component';
+import { AuthentificationService } from './authentification.service';
 
 @Component({
   selector: 'crm-login',
@@ -12,15 +14,19 @@ import{MatButtonModule} from '@angular/material/button'
     NgIf,
     MatInputModule,
     MatFormField,
-    MatButtonModule
+    MatButtonModule,
+    HelpComponent
    ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
     loginForm:FormGroup;
-
-    constructor(){
+    loginErrorMessages= {
+      required: 'login required',
+      minlength: 'should be 3 char at least'
+    }
+    constructor(private authentService: AuthentificationService){
       this.loginForm =new FormGroup({
         login: new FormControl('',[Validators.required, Validators.minLength(3)]),
         password: new FormControl('',[Validators.required, no$InPassWordValidator])
@@ -28,7 +34,11 @@ export class LoginComponent {
     }
 
     login():void{
-      console.log(this.loginForm);
+      const user= this.authentService.authentUser(
+         this.loginForm.value.login,
+         this.loginForm.value.password);
+      
+      console.log(user);
     }
 }
 
