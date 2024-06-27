@@ -1,4 +1,12 @@
 <input type="text" [(ngModel)]="searched" (keyup)="search()">
+
+<span>
+    <a mat-icon-button
+           routerLink="/consumer/new" >
+        <mat-icon>person_add</mat-icon>
+    </a>
+</span>
+
   <table>
     <thead>
       <tr>
@@ -10,14 +18,26 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of consumersObs | async">
-        <td>{{item.civility}}</td>
-        <td>{{item.firstname}}</td>
-        <td>{{item.lastname}}</td>
-        <td>{{item.email}}</td>
-        <td>{{item.phone | phone}}</td>
-        <button> createAt</button>
-        <button> updateAt</button>
+      <tr *ngFor="let consumer of consumersObs | async">
+        <td>{{consumer.civility}}</td>
+        <td>{{consumer.firstname}}</td>
+        <td>{{consumer.lastname}}</td>
+        <td>{{consumer.email}}</td>
+        <td>{{consumer.phone | phone}}</td>
+       
+        <span>
+            <a mat-icon-button
+                   [routerLink]="['/consumer', consumer.id ] ">
+                <mat-icon>edit</mat-icon>
+            </a>
+        </span>
+         
+        <span>
+            <a mat-icon-button
+                  (click)="deleteConsumer(consumer.id)">
+                <mat-icon>delete</mat-icon>
+            </a>
+        </span>
 
       </tr>
     
